@@ -1,0 +1,17 @@
+# Source files (only ship dist/)
+src/
+tsconfig.json
+
+# Development files
+*.log
+.gitignore
+.npmignore
+
+# Testing
+coverage/
+test/
+*.spec.ts
+
+# IDE
+.vscode/
+.idea/

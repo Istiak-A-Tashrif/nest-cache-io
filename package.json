@@ -1,0 +1,47 @@
+{
+  "name": "nest-redis-cache",
+  "version": "1.0.0",
+  "description": "A simplified NestJS Redis cache module using ioredis with fire-and-forget support",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "author": "Istiak Ahmed Tashrif <istiaktashrif@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Istiak-A-Tashrif/nest-redis-cache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Istiak-A-Tashrif/nest-redis-cache/issues"
+  },
+  "homepage": "https://github.com/Istiak-A-Tashrif/nest-redis-cache/#readme",
+  "keywords": [
+    "nestjs",
+    "redis",
+    "ioredis",
+    "cache",
+    "nest",
+    "caching",
+    "typescript"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^9.0.0 || ^10.0.0 || ^11.0.0",
+    "ioredis": "^5.0.0",
+    "reflect-metadata": "^0.1.13 || ^0.2.0",
+    "rxjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@types/node": "^22.10.7",
+    "ioredis": "^5.8.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "typescript": "^5.7.3"
+  }
+}
