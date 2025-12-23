@@ -1,6 +1,6 @@
-# nest-cache-io
+# nest-cache-redis
 
-[![npm version](https://badge.fury.io/js/nest-cache-io.svg)](https://www.npmjs.com/package/nest-cache-io)
+[![npm version](https://badge.fury.io/js/nest-cache-redis.svg)](https://www.npmjs.com/package/nest-cache-redis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 
@@ -22,7 +22,7 @@ A simplified, high-performance NestJS Redis cache module using ioredis with fire
 
 ```bash
 # npm will automatically install peer dependencies (npm 7+)
-npm install nest-cache-io
+npm install nest-cache-redis
 ```
 
 **Note:** This package has the following peer dependencies that will be automatically installed with npm 7+:
@@ -37,7 +37,7 @@ npm install nest-cache-io
 
 ```typescript
 import { Module } from "@nestjs/common";
-import { RedisCacheModule } from "nest-cache-io";
+import { RedisCacheModule } from "nest-cache-redis";
 
 @Module({
   imports: [
@@ -61,7 +61,7 @@ export class AppModule {}
 
 ```typescript
 import { Injectable } from "@nestjs/common";
-import { RedisCacheService } from "nest-cache-io";
+import { RedisCacheService } from "nest-cache-redis";
 
 @Injectable()
 export class UserService {
@@ -249,7 +249,7 @@ await client.ping(); // Direct ioredis access
 ### Async Configuration
 
 ```typescript
-import { RedisCacheModule } from "nest-cache-io";
+import { RedisCacheModule } from "nest-cache-redis";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
@@ -655,7 +655,7 @@ Mock the cache service in tests:
 
 ```typescript
 import { Test } from "@nestjs/testing";
-import { RedisCacheService } from "nest-cache-io";
+import { RedisCacheService } from "nest-cache-redis";
 
 describe("UserService", () => {
   let service: UserService;
@@ -740,5 +740,5 @@ Contributions welcome! Please open an issue or PR.
 
 ## Support
 
-- GitHub Issues: [Report a bug](https://github.com/Istiak-A-Tashrif/nest-cache-io/issues)
-- Documentation: [Full docs](https://github.com/Istiak-A-Tashrif/nest-cache-io#readme)
+- GitHub Issues: [Report a bug](https://github.com/Istiak-A-Tashrif/nest-cache-redis/issues)
+- Documentation: [Full docs](https://github.com/Istiak-A-Tashrif/nest-cache-redis#readme)

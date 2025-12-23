@@ -1,5 +1,5 @@
 {
-  "name": "nest-cache-io",
+  "name": "nest-cache-redis",
   "version": "1.0.0",
   "description": "A simplified, high-performance NestJS Redis cache module with fire-and-forget support, automatic keyPrefix handling, pattern-based deletion, and TypeScript-first design",
   "license": "MIT",
@@ -11,12 +11,12 @@
   "author": "Istiak Ahmed Tashrif <istiaktashrif@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Istiak-A-Tashrif/nest-cache-io.git"
+    "url": "https://github.com/Istiak-A-Tashrif/nest-cache-redis.git"
   },
   "bugs": {
-    "url": "https://github.com/Istiak-A-Tashrif/nest-cache-io/issues"
+    "url": "https://github.com/Istiak-A-Tashrif/nest-cache-redis/issues"
   },
-  "homepage": "https://github.com/Istiak-A-Tashrif/nest-cache-io/#readme",
+  "homepage": "https://github.com/Istiak-A-Tashrif/nest-cache-redis/#readme",
   "keywords": [
     "nestjs",
     "redis",
