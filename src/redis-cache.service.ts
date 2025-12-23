@@ -44,8 +44,6 @@ export class RedisCacheService implements OnModuleDestroy {
    */
   async get<T = any>(key: string): Promise<T | null> {
     try {
-      this.debug && this.logger.debug(`GET key: ${key}`);
-
       const value = await this.client.get(key);
 
       if (value === null) {
@@ -108,8 +106,6 @@ export class RedisCacheService implements OnModuleDestroy {
     ttl?: number,
   ): Promise<T> {
     try {
-      this.debug && this.logger.debug(`GETORSET key: ${key}`);
-
       // Try to get from cache first (don't log internal get calls)
       const value = await this.client.get(key);
       
@@ -203,22 +199,28 @@ export class RedisCacheService implements OnModuleDestroy {
 
   /**
    * Delete all keys matching a pattern using SCAN (non-blocking)
+   * Automatically handles keyPrefix from Redis client options
    * @param pattern Redis pattern (e.g., 'user:*')
    * @returns The number of keys deleted
    */
   async delPattern(pattern: string): Promise<number> {
     try {
-      this.debug && this.logger.debug(`DEL pattern: ${pattern}`);
+      // Get the keyPrefix from the client options
+      const keyPrefix = this.client.options.keyPrefix || '';
+      
+      // Build the full pattern with prefix for SCAN
+      const fullPattern = `${keyPrefix}${pattern}`;
 
       let cursor = '0';
       const allKeys: string[] = [];
 
       // Use SCAN instead of KEYS for better performance
+      // SCAN searches the actual Redis keys (with prefix)
       do {
         const result = await this.client.scan(
           cursor,
           'MATCH',
-          pattern,
+          fullPattern,
           'COUNT',
           100,
         );
@@ -226,7 +228,11 @@ export class RedisCacheService implements OnModuleDestroy {
         const keys = result[1];
 
         if (keys.length > 0) {
-          allKeys.push(...keys);
+          // Remove prefix from keys since ioredis client automatically adds it
+          const keysWithoutPrefix = keyPrefix 
+            ? keys.map(key => key.replace(keyPrefix, ''))
+            : keys;
+          allKeys.push(...keysWithoutPrefix);
         }
       } while (cursor !== '0');
 
@@ -282,6 +288,53 @@ export class RedisCacheService implements OnModuleDestroy {
       return totalDeleted;
     } catch (error) {
       this.logger.error(`Error deleting patterns:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all keys matching a pattern using SCAN (non-blocking)
+   * Automatically handles keyPrefix from Redis client options
+   * @param pattern Redis pattern (e.g., 'user:*')
+   * @returns Array of matching keys (without prefix)
+   */
+  async getKeysByPattern(pattern: string): Promise<string[]> {
+    try {
+      // Get the keyPrefix from the client options
+      const keyPrefix = this.client.options.keyPrefix || '';
+      
+      // Build the full pattern with prefix for SCAN
+      const fullPattern = `${keyPrefix}${pattern}`;
+
+      let cursor = '0';
+      const allKeys: string[] = [];
+
+      // Use SCAN instead of KEYS for better performance
+      do {
+        const result = await this.client.scan(
+          cursor,
+          'MATCH',
+          fullPattern,
+          'COUNT',
+          100,
+        );
+        cursor = result[0];
+        const keys = result[1];
+
+        if (keys.length > 0) {
+          // Remove prefix from keys for consistency
+          const keysWithoutPrefix = keyPrefix 
+            ? keys.map(key => key.replace(keyPrefix, ''))
+            : keys;
+          allKeys.push(...keysWithoutPrefix);
+        }
+      } while (cursor !== '0');
+
+      this.debug && this.logger.debug(`GET keys by pattern: ${pattern} - found ${allKeys.length} keys`);
+
+      return allKeys;
+    } catch (error) {
+      this.logger.error(`Error getting keys by pattern ${pattern}:`, error);
       throw error;
     }
   }

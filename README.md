@@ -1,10 +1,14 @@
-# nest-redis-cache
+# nest-cache-io
+
+[![npm version](https://badge.fury.io/js/nest-cache-io.svg)](https://www.npmjs.com/package/nest-cache-io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 
 A simplified, high-performance NestJS Redis cache module using ioredis with fire-and-forget support and debug logging.
 
 ## Features
 
-✨ **Simple API** - Clean methods: `get`, `set`, `getOrSet`, `delKey`, `delKeys`, `delPattern`, `delPatterns`, `reset`, `getStats`  
+✨ **Simple API** - Clean methods: `get`, `set`, `getOrSet`, `delKey`, `delKeys`, `delPattern`, `delPatterns`, `getKeysByPattern`, `reset`, `getStats`  
 🚀 **Fire and Forget Mode** - Optional non-blocking cache operations (global + method-level override)  
 🌍 **Global Module** - Register as global module by default (configurable)  
 🐛 **Debug Logging** - Built-in debug mode for cache operations  
@@ -18,10 +22,10 @@ A simplified, high-performance NestJS Redis cache module using ioredis with fire
 
 ```bash
 # npm will automatically install peer dependencies (npm 7+)
-npm install nest-redis-cache
+npm install nest-cache-io
 
 # For npm 6 or if you want to explicitly install peer dependencies:
-npm install nest-redis-cache ioredis
+npm install nest-cache-io ioredis
 ```
 
 **Note:** This package has the following peer dependencies that will be automatically installed with npm 7+:
@@ -36,7 +40,7 @@ npm install nest-redis-cache ioredis
 
 ```typescript
 import { Module } from "@nestjs/common";
-import { RedisCacheModule } from "nest-redis-cache";
+import { RedisCacheModule } from "nest-cache-io";
 
 @Module({
   imports: [
@@ -60,7 +64,7 @@ export class AppModule {}
 
 ```typescript
 import { Injectable } from "@nestjs/common";
-import { RedisCacheService } from "nest-redis-cache";
+import { RedisCacheService } from "nest-cache-io";
 
 @Injectable()
 export class UserService {
@@ -165,12 +169,17 @@ await cache.delKeys(["temp:1", "temp:2"], { fireAndForget: true });
 
 Delete all keys matching a pattern using SCAN (non-blocking).
 
+**Automatically handles `keyPrefix`:** If you configured a `keyPrefix` in Redis options (e.g., `keyPrefix: 'myapp:'`), the package automatically adds it when scanning and removes it when deleting. You don't need to include the prefix in your pattern!
+
 ```typescript
-// Delete all user cache
+// If keyPrefix is 'myapp:', this automatically scans for 'myapp:user:*'
 await cache.delPattern("user:*");
 
 // Delete specific pattern
 await cache.delPattern("session:2024:*");
+
+// With keyPrefix 'myapp:', actual Redis keys: 'myapp:session:2024:*'
+// But you just pass the pattern without prefix!
 ```
 
 #### `delPatterns(patterns: string[]): Promise<number>`
@@ -179,6 +188,7 @@ Delete multiple patterns efficiently.
 
 ```typescript
 await cache.delPatterns(["user:*", "session:*", "temp:*"]);
+// Each pattern automatically gets the keyPrefix if configured
 ```
 
 #### `reset(options?: { fireAndForget?: boolean }): Promise<void>`
@@ -190,6 +200,26 @@ await cache.reset(); // ⚠️ Use with caution!
 
 // Fire and forget
 await cache.reset({ fireAndForget: true });
+```
+
+#### `getKeysByPattern(pattern: string): Promise<string[]>`
+
+Get all keys matching a pattern using SCAN (non-blocking). Returns keys without the prefix.
+
+**Automatically handles `keyPrefix`:** Just like `delPattern`, this method automatically adds the keyPrefix when scanning and removes it from the returned keys.
+
+```typescript
+// Get all user keys (automatically handles keyPrefix)
+const userKeys = await cache.getKeysByPattern("user:*");
+console.log(userKeys); // ['user:1', 'user:2', 'user:3']
+// Note: No prefix in returned keys, even if keyPrefix is configured!
+
+// Get session keys for specific date
+const sessionKeys = await cache.getKeysByPattern("session:2024-12:*");
+
+// Useful for debugging or monitoring
+const allKeys = await cache.getKeysByPattern("*");
+console.log(`Total keys: ${allKeys.length}`);
 ```
 
 #### `getStats(): Promise<CacheStats>`
@@ -222,7 +252,7 @@ await client.ping(); // Direct ioredis access
 ### Async Configuration
 
 ```typescript
-import { RedisCacheModule } from "nest-redis-cache";
+import { RedisCacheModule } from "nest-cache-io";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
@@ -375,10 +405,8 @@ RedisCacheModule.forRoot({
 **Example debug output:**
 
 ```
-[RedisCacheService] DEBUG GET key: user:123
 [RedisCacheService] DEBUG GET key: user:123 - HIT
 [RedisCacheService] DEBUG SET key: user:456, ttl: 3600s
-[RedisCacheService] DEBUG DEL pattern: session:*
 [RedisCacheService] DEBUG DEL pattern: session:* - deleted 25 keys
 [RedisCacheService] DEBUG GETORSET key: user:789
 [RedisCacheService] DEBUG GETORSET key: user:789 - computing value
@@ -630,7 +658,7 @@ Mock the cache service in tests:
 
 ```typescript
 import { Test } from "@nestjs/testing";
-import { RedisCacheService } from "nest-redis-cache";
+import { RedisCacheService } from "nest-cache-io";
 
 describe("UserService", () => {
   let service: UserService;
@@ -715,5 +743,5 @@ Contributions welcome! Please open an issue or PR.
 
 ## Support
 
-- GitHub Issues: [Report a bug](https://github.com/yourusername/nest-redis-cache/issues)
-- Documentation: [Full docs](https://github.com/yourusername/nest-redis-cache#readme)
+- GitHub Issues: [Report a bug](https://github.com/Istiak-A-Tashrif/nest-cache-io/issues)
+- Documentation: [Full docs](https://github.com/Istiak-A-Tashrif/nest-cache-io#readme)
