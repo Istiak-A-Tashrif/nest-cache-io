@@ -23,9 +23,6 @@ A simplified, high-performance NestJS Redis cache module using ioredis with fire
 ```bash
 # npm will automatically install peer dependencies (npm 7+)
 npm install nest-cache-io
-
-# For npm 6 or if you want to explicitly install peer dependencies:
-npm install nest-cache-io ioredis
 ```
 
 **Note:** This package has the following peer dependencies that will be automatically installed with npm 7+:

@@ -1,7 +1,7 @@
 {
   "name": "nest-cache-io",
   "version": "1.0.0",
-  "description": "A simplified NestJS Redis cache module using ioredis with fire-and-forget support",
+  "description": "A simplified, high-performance NestJS Redis cache module with fire-and-forget support, automatic keyPrefix handling, pattern-based deletion, and TypeScript-first design",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
